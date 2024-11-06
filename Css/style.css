@@ -1,0 +1,63 @@
+    /* General Body Styles */
+body {
+    font-family: 'Fira Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4; /* Light Gray background directly specified */
+    color: #333; /* Dark Gray text color directly specified */
+}
+
+h1, h2, h3 {
+    font-family: 'Roboto Slab', serif;
+    color: #2a9d8f; /* Soft Green directly specified */
+}
+
+/* Header Styles */
+header {
+    background: white; /* Dark Gray background directly specified */
+    color: #333;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Link Styles */
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+/* Section Styling */
+section {
+    margin: 20px;
+    padding: 20px;
+    background: white;
+    border-left: 5px solid #2a9d8f; /* Soft Green border directly specified */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #2a9d8f; /* Soft Green border directly specified */
+    padding: 10px;
+    text-align: left;
+}
+
+/* Footer Styles */
+footer {
+    background: #333; /* Dark Gray background directly specified */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    clear: both;
+}
+
+#project-description img{
+    height: 50px;
+    width: 50px;
+}

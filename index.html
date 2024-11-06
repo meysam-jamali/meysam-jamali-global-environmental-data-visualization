@@ -2,11 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Environmental Data Visualizations</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Css/style.css">
 </head>
-<body>
-    <h1>My First Environmental Data Visualization Project</h1>
+<body class="bg-light">
+    <!-- Main container -->
+    <div class="container">
+        
+        <!-- Header section -->
+        <header class="text-center my-4">
+            <h1>Global Environmental Data Visualizations</h1>
+            <h2>Project by Meysam Jamali</h2>
+        </header>
+
+        <!-- Project Description Section -->
+        <section id="project-description" class="mb-5">
+            <h3>About This Project</h3>
+            <p>This project visualizes global environmental data to increase awareness and encourage informed actions. We utilize data from sources like NASA, World Bank, UN Statistics Division, and Our World in Data to create interactive charts highlighting key environmental trends.</p>
+            <img src="Image/Project-Overview.jpg" alt="Project Overview" class="img-fluid">
+        </section>
+
+        <!-- Data Sources -->
+        <section class="text-muted mt-3">
+            <p>Data Sources: 
+                <a href="https://data.worldbank.org" target="_blank">World Bank</a>, 
+                <a href="https://unstats.un.org/sdes/dataportal" target="_blank">UN Statistics</a>, 
+                <a href="https://ourworldindata.org" target="_blank">Our World in Data</a>, 
+                <a href="https://climate.nasa.gov/vital-signs/carbon-dioxide" target="_blank">NASA Climate</a>
+            </p>
+        </section>
+
+        <!-- Data Visualization Section 1 - Bar Chart -->
+        <section id="visualizations" class="mt-4">
+            <h2>Comparing Environmental Categories</h2>
+            <h3>Bar Chart</h3>
+            <p>2020 Bar (blue): Shows the per capita CO₂ emissions for each country in the year 2020.<br>
+            2020 Average Bar (darker blue): Represents the average CO₂ emissions per capita across the decade from 2010 to 2020.</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="visualization" id="bar-chart"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Visualization Section 2 - Heatmap -->
+        <section id="heatmap-visualization" class="mt-5">
+            <h3>Heatmap of Top 10 CO₂ Emitting Countries in 2020</h3>
+            <div class="visualization" id="heatmap"></div>
+        </section>
+
+        
+         <!-- Stacked Bar Chart -->
+         <section id="emission-categories-section" class="mt-5">
+            <h3>CO₂ Emissions by Sector for Top 5 Emitters</h3>
+            <h4>Categories: "Coal," "Oil," "Gas," "Cement," "Other"</h4>
+            <div id="emission-categories-chart"></div>
+        </section>
+        
+        <!-- Horizontal Stacked Bar Chart with Small Multiples Section -->
+        <section id="horizontal-stacked-bar-section" class="mt-5">
+            <h3>Horizontal Stacked Bar Chart with Small Multiples - CO₂ Emissions by Region and Category</h3>
+            <h4>Categories: "Coal," "Oil," "Gas," "Cement," "Other"</h4>
+            <p>This chart shows CO₂ emissions for each region split by emission categories and sorted by total emissions.</p>
+            <div id="horizontal-stacked-bar-chart"></div>
+        </section>
+
+        <!-- 100% Stacked Bar Chart Section -->
+        <section id="stacked-bar-chart-100-section" class="mt-5">
+            <h3>100% Stacked Bar Chart of CO₂ Emissions by Country and Category</h3>
+            <h4>Categories: "Coal," "Oil," "Gas," "Cement," "Other"</h4>
+            <p>This chart shows each country's CO₂ emissions as a percentage of its total emissions, broken down by category.</p>
+            <div id="stacked-bar-chart-100"></div>
+        </section>
+        
+        <!-- Waffle Chart Section -->
+        <section id="waffle-chart-section" class="mt-5">
+            <h3>Waffle Chart - CO₂ Emissions by Country and Category</h3>
+            <h4>Categories: "Coal," "Oil," "Gas," "Cement," "Other"</h4>
+            <p>This chart visualizes each country's CO₂ emissions using a 10x10 grid, with each square representing a part of the total emissions, color-coded by emission category.</p>
+            <div id="waffle-chart"></div>
+        </section>
+
+        <!-- Coming Soon Section -->
+        <section id="future-visualizations" class="mt-4">
+            <h3>Upcoming Visualizations</h3>
+            <p>Stay tuned for additional insights on carbon emissions, deforestation rates, and global temperature changes.</p>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-4">
+        <p>&copy; Meysam Jamali - EarthWatchers.</p>
+    </footer>
+
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- D3.js Library for Data Visualizations -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- Custom JavaScript for Data Fetching and Visualization -->
     <script src="Javascript/main.js"></script>
 </body>
 </html>
