@@ -1,3 +1,4 @@
+// Section 1
 // Bar Chart - For a particular year and average a decade
 // Function to fetch and parse CSV data from Our World in Data
 const fetchCO2Data = async () => {
@@ -800,3 +801,175 @@ const renderWaffleChart = (data, colorScale) => {
 
 // Fetch data and render the waffle chart
 fetchAndRenderWaffleChart();
+
+// Section 2
+// Alluvial
+const renderAlluvialManually = (nodes, links) => {
+    console.log("Rendering manual alluvial chart...");
+
+    const svgWidth = 800;
+    const svgHeight = 600;
+    const margin = { top: 20, right: 20, bottom: 20, left: 50 };
+    const width = svgWidth - margin.left - margin.right;
+    const height = svgHeight - margin.top - margin.bottom;
+
+    // Remove existing SVG
+    d3.select("#alluvial-diagram").selectAll("*").remove();
+
+    const svg = d3
+        .select("#alluvial-diagram")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
+
+    const chart = svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Node positions
+    const levelSpacing = width / 3; // Space between levels
+    const nodeHeight = 30;
+    const nodePadding = 10;
+
+    const levels = {
+        continent: 0,
+        country: 1,
+        category: 2,
+    };
+
+    // Scale for positioning nodes vertically within levels
+    const levelCounts = { continent: 0, country: 0, category: 0 };
+    const verticalSpacing = height / 10;
+
+    const nodePositions = {};
+    nodes.forEach((node) => {
+        const level = levels[node.type];
+        nodePositions[node.id] = {
+            x: level * levelSpacing,
+            y: levelCounts[node.type] * verticalSpacing + nodePadding,
+        };
+        levelCounts[node.type] += 1;
+    });
+
+    console.log("Node Positions:", nodePositions);
+
+    // Draw links
+    chart
+        .selectAll(".link")
+        .data(links)
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("d", (d) => {
+            const source = nodePositions[d.source];
+            const target = nodePositions[d.target];
+            return `M${source.x + 10},${source.y + nodeHeight / 2}C${(source.x +
+                target.x) / 2},${source.y + nodeHeight / 2} ${(source.x + target.x) / 2},${target.y +
+                nodeHeight / 2} ${target.x},${target.y + nodeHeight / 2}`;
+        })
+        .attr("fill", "none")
+        .attr("stroke", "#ccc")
+        .attr("stroke-width", (d) => Math.max(2, d.value / 1000)) // Scale for visual clarity
+        .attr("opacity", 0.8);
+
+    console.log("Links Rendered:", links);
+
+    // Draw nodes
+    chart
+        .selectAll(".node")
+        .data(nodes)
+        .enter()
+        .append("rect")
+        .attr("class", "node")
+        .attr("x", (d) => nodePositions[d.id].x)
+        .attr("y", (d) => nodePositions[d.id].y)
+        .attr("width", 100)
+        .attr("height", nodeHeight)
+        .attr("fill", (d) => {
+            if (d.type === "continent") return "#66c2a5";
+            if (d.type === "country") return "#fc8d62";
+            return "#8da0cb";
+        });
+
+    // Add node labels
+    chart
+        .selectAll(".label")
+        .data(nodes)
+        .enter()
+        .append("text")
+        .attr("x", (d) => nodePositions[d.id].x + 10)
+        .attr("y", (d) => nodePositions[d.id].y + nodeHeight / 2 + 5)
+        .attr("fill", "#000")
+        .attr("font-size", 12)
+        .text((d) => d.id);
+};
+
+const fetchAndRenderAlluvial = async () => {
+    console.log("Fetching data...");
+
+    try {
+        const response = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv");
+        const rawData = await response.text();
+        const data = d3.csvParse(rawData, d3.autoType);
+
+        console.log("Data fetched successfully.");
+
+        // Map country to continent (adjust to match your dataset)
+        const countryToContinent = {
+            "United States": "North America",
+            Canada: "North America",
+            Brazil: "South America",
+            China: "Asia",
+            India: "Asia",
+            Russia: "Europe",
+            Germany: "Europe",
+            "United Kingdom": "Europe",
+            Japan: "Asia",
+            Australia: "Oceania",
+        };
+
+        const nodes = [];
+        const links = [];
+        const nodeIds = new Set();
+
+        // Create nodes and links
+        Object.entries(countryToContinent).forEach(([country, continent]) => {
+            if (!nodeIds.has(continent)) {
+                nodes.push({ id: continent, type: "continent" });
+                nodeIds.add(continent);
+            }
+            if (!nodeIds.has(country)) {
+                nodes.push({ id: country, type: "country" });
+                nodeIds.add(country);
+            }
+            const countryData = data.find((d) => d.country === country && d.year === 2020);
+            const totalCO2 = countryData ? countryData.co2 || 0 : 0;
+
+            links.push({ source: continent, target: country, value: totalCO2 });
+
+            ["coal_co2", "oil_co2", "gas_co2", "cement_co2", "land_use_change_co2"].forEach((category) => {
+                if (!nodeIds.has(category)) {
+                    nodes.push({ id: category, type: "category" });
+                    nodeIds.add(category);
+                }
+                if (countryData && countryData[category]) {
+                    links.push({
+                        source: country,
+                        target: category,
+                        value: countryData[category],
+                    });
+                }
+            });
+        });
+
+        console.log("Processed Nodes:", nodes);
+        console.log("Processed Links:", links);
+
+        renderAlluvialManually(nodes, links);
+    } catch (error) {
+        console.error("Error fetching or parsing data:", error);
+    }
+};
+
+// Trigger rendering
+fetchAndRenderAlluvial();
