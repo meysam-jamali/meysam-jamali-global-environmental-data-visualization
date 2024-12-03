@@ -973,3 +973,127 @@ const fetchAndRenderAlluvial = async () => {
 
 // Trigger rendering
 fetchAndRenderAlluvial();
+
+// Map
+const renderMap = async () => {
+    console.log("Rendering map...");
+
+    const url = "https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv";
+    const worldGeoJSON = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
+
+    try {
+        // Fetch data
+        const response = await fetch(url);
+        const rawData = await response.text();
+        const data = d3.csvParse(rawData, d3.autoType);
+
+        console.log("Data fetched successfully.");
+
+        // Fetch GeoJSON for the world map
+        const geoResponse = await fetch(worldGeoJSON);
+        const geoData = await geoResponse.json();
+
+        console.log("GeoJSON fetched successfully.");
+
+        // Filter data for the selected year
+        const selectedYear = 2020;
+        const filteredData = data.filter(d => d.year === selectedYear);
+
+        // Map data to GeoJSON
+        geoData.features.forEach(feature => {
+            const countryData = filteredData.find(d => d.iso_code === feature.id);
+            feature.properties.emissions = countryData ? countryData.co2 || 0 : 0;
+            feature.properties.coal_co2 = countryData ? countryData.coal_co2 || 0 : 0;
+            feature.properties.oil_co2 = countryData ? countryData.oil_co2 || 0 : 0;
+            feature.properties.gas_co2 = countryData ? countryData.gas_co2 || 0 : 0;
+            feature.properties.cement_co2 = countryData ? countryData.cement_co2 || 0 : 0;
+            feature.properties.land_use_change_co2 = countryData ? countryData.land_use_change_co2 || 0 : 0;
+        });
+
+        console.log("GeoJSON mapped data:", geoData.features);
+
+        // Set up map dimensions
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select("#map")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const projection = d3.geoMercator()
+            .scale(130)
+            .translate([width / 2, height / 1.5]);
+
+        const path = d3.geoPath().projection(projection);
+
+        // Initialize color scale
+        const maxEmission = d3.max(geoData.features, d => d.properties.emissions);
+        console.log("Max emission value:", maxEmission);
+
+        const colorScale = d3.scaleSequential(d3.interpolateBlues)
+            .domain([0, maxEmission]);
+
+        // Draw map
+        svg.selectAll("path")
+            .data(geoData.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", d => {
+                const value = d.properties.emissions;
+                return value > 0 ? colorScale(value) : "#ccc"; // Default color for countries with no data
+            })
+            .attr("stroke", "#000")
+            .attr("stroke-width", 0.5)
+            .on("mouseover", (event, d) => {
+                d3.select("#tooltip")
+                    .style("opacity", 1)
+                    .html(`
+                        <strong>${d.properties.name}</strong><br>
+                        Total Emissions: ${d.properties.emissions || 0} Mt<br>
+                        Coal: ${d.properties.coal_co2 || 0} Mt<br>
+                        Oil: ${d.properties.oil_co2 || 0} Mt<br>
+                        Gas: ${d.properties.gas_co2 || 0} Mt<br>
+                        Cement: ${d.properties.cement_co2 || 0} Mt<br>
+                        Land Use Change: ${d.properties.land_use_change_co2 || 0} Mt
+                    `)
+                    .style("left", `${event.pageX + 10}px`)
+                    .style("top", `${event.pageY - 20}px`);
+            })
+            .on("mouseout", () => {
+                d3.select("#tooltip").style("opacity", 0);
+            });
+
+        // Add tooltip
+        d3.select("body").append("div")
+            .attr("id", "tooltip")
+            .style("position", "absolute")
+            .style("background", "#fff")
+            .style("padding", "10px")
+            .style("border", "1px solid #ccc")
+            .style("border-radius", "5px")
+            .style("opacity", 0);
+
+        // Dropdown functionality
+        d3.select("#emission-category").on("change", function () {
+            const selectedCategory = this.value;
+            const maxValue = d3.max(geoData.features, d => d.properties[selectedCategory]);
+            console.log(`Max value for ${selectedCategory}:`, maxValue);
+            colorScale.domain([0, maxValue]);
+
+            svg.selectAll("path")
+                .transition()
+                .duration(500)
+                .attr("fill", d => {
+                    const value = d.properties[selectedCategory];
+                    return value > 0 ? colorScale(value) : "#ccc";
+                });
+        });
+
+    } catch (error) {
+        console.error("Error fetching or rendering map:", error);
+    }
+};
+
+renderMap();

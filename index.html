@@ -105,6 +105,41 @@
             <p>This alluvial diagram visualizes the flow of CO₂ emissions across continents, countries, and emission sources.</p>
             <div id="alluvial-diagram"></div>
         </section>        
+
+        <!-- Map Visualization Section -->
+        <section id="map-section" class="mt-5">
+            <h3>Global CO₂ Emissions Map</h3>
+            <h4>Visualizing emissions by categories: "Coal," "Oil," "Gas," "Cement," and "Land Use Change"</h4>
+            <p>
+                This map shows global CO₂ emissions using shades of blue to indicate emission levels:
+                <ul>
+                    <li><strong>Light Blue</strong>: Low emissions</li>
+                    <li><strong>Medium Blue</strong>: Moderate emissions</li>
+                    <li><strong>Dark Blue</strong>: High emissions</li>
+                    <li><strong>Gray</strong>: No data available</li>
+                </ul>
+            </p>
+            <p>Hover over a country to see detailed emission data for the selected category. Use the dropdown below to filter by emission type.</p>
+            
+            <!-- Dropdown for emission category -->
+            <div class="mb-3">
+                <label for="emission-category">Select Emission Category:</label>
+                <select id="emission-category" class="form-control">
+                    <option value="emissions">Total Emissions</option>
+                    <option value="coal_co2">Coal</option>
+                    <option value="oil_co2">Oil</option>
+                    <option value="gas_co2">Gas</option>
+                    <option value="cement_co2">Cement</option>
+                    <option value="land_use_change_co2">Land Use Change</option>
+                </select>
+            </div>
+            
+            <!-- Map container -->
+            <div id="map" style="position: relative;"></div>
+            
+            <!-- Tooltip container -->
+            <div id="tooltip" style="position: absolute; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 5px; opacity: 0;"></div>
+        </section>
         
     </div>
 
